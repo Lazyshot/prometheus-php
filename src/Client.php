@@ -3,7 +3,7 @@ namespace Prometheus;
 
 require_once 'protos/metrics.php';
 
-use DrSlump\Protobuf\Codec\Binary\Writer;
+use DrSlump\Protobuf\Codec\Binary\NativeWriter;
 
 class Client {
 	private $registry;
@@ -25,7 +25,7 @@ class Client {
 	}
 
 	public function renderStats() {
-		$w = new Writer;
+		$w = new NativeWriter;
 
 		foreach ($this->registry->getMetrics() as $metric) {
 			$metricProto = $metric->toProto();
