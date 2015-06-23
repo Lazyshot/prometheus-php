@@ -11,7 +11,9 @@ class Client {
 	public function __construct(array $options = []) {
 		$this->registry = new Registry;
 
-		// Set memcache configuration
+		// TODO: Set memcache configuration
+
+		// TODO: Allow option for requiring http basic authentication
 	}
 
 	public function newCounter(array $opts = []) {

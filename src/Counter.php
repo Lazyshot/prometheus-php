@@ -21,6 +21,8 @@ class Counter extends Metric {
 			$this->values[$hash] = $this->defaultValue();
 
 		$this->values[$hash] += $by;
+
+		$this->updateCache();
 	}
 
 	public function decrement($labels = [], $by = 1) {

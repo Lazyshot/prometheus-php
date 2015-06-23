@@ -13,6 +13,8 @@ abstract class Metric {
 	private $values = [];
 	private $labels = [];
 
+	private $opts;
+
 	public $namespace;
 	public $name;
 	public $subsystem;
@@ -20,7 +22,8 @@ abstract class Metric {
 
 	public $full_name;
 
-	public function __construct(array $options = []) {
+	public function __construct(array $opts = []) {
+		$this->opts = $opts;
 		$this->name = $opts['name'] ?: '';
 		$this->namespace = $opts['namespace'] ?: '';
 		$this->subsystem = $opts['subsystem'] ?: '';
@@ -30,6 +33,8 @@ abstract class Metric {
 		if (empty($this->help)) throw new PrometheusException("A help is required for a metric");
 
 		$this->full_name = implode('_', [$this->namespace, $this->subsystem, $this->name]);
+
+		$this->updateFromCache();
 	}
 
 	public function values() {
@@ -113,5 +118,22 @@ abstract class Metric {
 		// TODO: save to memcached
 
 		return $hash;
+	}
+
+	protected function updateCache() {
+		if (!function_exists('apc_store'))
+			return;
+
+		apc_store($this->full_name . "_labels", $this->labels);
+		apc_store($this->full_name . "_values", $this->values);
+		apc_store($this->full_name . "_opts", $this->opts);
+	}
+
+	protected function updateFromCache() {
+		if (!function_exists('apc_fetch'))
+			return;
+
+		$this->labels = apc_fetch($this->full_name . "_labels");
+		$this->values = apc_fetch($this->full_name . "_values");
 	}
 }
