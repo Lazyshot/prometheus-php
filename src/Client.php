@@ -41,4 +41,17 @@ class Client {
 
 		fwrite(STDOUT, $w->getBytes());
 	}
+
+	public function debugStats() {
+		$codec = new \DrSlump\Protobuf\Codec\PhpArray(['tags' => true, 'strict' => true]);
+		$tbr = [];
+
+		foreach ($this->registry->getMetrics() as $metric) {
+			$metricProto = $metric->toProto();
+
+			$tbr []= $metricProto->serialize($codec);
+		}
+
+		return $tbr;
+	}
 }

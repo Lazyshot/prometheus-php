@@ -10,10 +10,10 @@ use io\prometheus\client\MetricFamily as PBMetricFamily;
 use io\prometheus\client\MetricType as PBMetricType;
 
 abstract class Metric {
-	private $values = [];
-	private $labels = [];
+	protected $values = [];
+	protected $labels = [];
 
-	private $opts;
+	protected $opts;
 
 	public $namespace;
 	public $name;
@@ -24,10 +24,10 @@ abstract class Metric {
 
 	public function __construct(array $opts = []) {
 		$this->opts = $opts;
-		$this->name = $opts['name'] ?: '';
-		$this->namespace = $opts['namespace'] ?: '';
-		$this->subsystem = $opts['subsystem'] ?: '';
-		$this->help = $opts['help'] ?: '';
+		$this->name = isset($opts['name']) ? $opts['name'] : '';
+		$this->namespace = isset($opts['namespace']) ? $opts['namespace'] : '';
+		$this->subsystem = isset($opts['subsystem']) ? $opts['subsystem'] : '';
+		$this->help = isset($opts['help']) ? $opts['help'] : '';
 
 		if (empty($this->name)) throw new PrometheusException("A name is required for a metric");
 		if (empty($this->help)) throw new PrometheusException("A help is required for a metric");
@@ -65,15 +65,15 @@ abstract class Metric {
 		switch ($this->type()) {
 			case "counter":
 				$type = PBMetricType::COUNTER;
-				$metricClass = PBCounter;
+				$metricClass = "io\prometheus\client\Counter";
 				break;
 			case "gauge":
 				$type = PBMetricType::GAUGE;
-				$metricClass = PBGauge;
+				$metricClass = "io\prometheus\client\Gauge";
 				break;
 			default:
 				$type = PBMetricType::UNTYPED;
-				$metricClass = PBUntyped;
+				$metricClass = "io\prometheus\client\Untyped";
 		}
 
 		$mf->setType($type);
