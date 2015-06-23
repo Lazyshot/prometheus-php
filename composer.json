@@ -1,0 +1,20 @@
+{
+	"name": "lazyshot/prometheus-php",
+	"description": "Prometheus metrics client for PHP",
+	"license": "apache2",
+	"authors": [
+		{
+			"name": "Bryan Peterson",
+			"email": "lazyshot@gmail.com"
+		}
+	],
+	"require": {
+		"ext-memcached": "*",
+		"centraldesktop/protobuf-php": "~0.6.9"
+	},
+	"autoload": {
+		"psr-4": {
+			"Prometheus\\": "src/"
+		}
+	}
+}
