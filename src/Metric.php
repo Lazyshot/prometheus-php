@@ -1,14 +1,6 @@
 <?php
 namespace Prometheus;
 
-use io\prometheus\client\Counter as PBCounter;
-use io\prometheus\client\Gauge as PBGauge;
-use io\prometheus\client\Untyped as PBUntyped;
-use io\prometheus\client\LabelPair as PBLabelPair;
-use io\prometheus\client\Metric as PBMetric;
-use io\prometheus\client\MetricFamily as PBMetricFamily;
-use io\prometheus\client\MetricType as PBMetricType;
-
 abstract class Metric {
 	protected $values = [];
 	protected $labels = [];
@@ -57,59 +49,28 @@ abstract class Metric {
 
 	abstract public function type();
 
-	public function toProto() {
-		$mf = new PBMetricFamily();
-		$mf->setName($this->full_name);
-		$mf->setHelp($this->help);
+	public function serialize() {
+		$tbr = [];
 
-		switch ($this->type()) {
-			case "counter":
-				$type = PBMetricType::COUNTER;
-				$metricClass = "io\prometheus\client\Counter";
-				break;
-			case "gauge":
-				$type = PBMetricType::GAUGE;
-				$metricClass = "io\prometheus\client\Gauge";
-				break;
-			default:
-				$type = PBMetricType::UNTYPED;
-				$metricClass = "io\prometheus\client\Untyped";
-		}
-
-		$mf->setType($type);
+		$tbr []= "# HELP " . $this->full_name . " " . $this->help;
+		$tbr []= "# TYPE " . $this->full_name . " " . $this->type();
 
 		foreach ($this->values() as $val) {
 			list($labels, $value) = $val;
 			$label_pairs = [];
 
 			foreach ($labels as $k => $v) {
-				$label_pair = new PBLabelPair;
-				$label_pair->setName($k);
-				$label_pair->setValue($v);
-				$label_pairs []= $label_pair;
+				$v = str_replace("\"", "\\\"", $v);
+				$v = str_replace("\n", "\\n", $v);
+				$v = str_replace("\\", "\\\\", $v);
+
+				$label_pairs []= "$k=\"$v\"";
 			}
 
-			$metric = new PBMetric();
-			$metric->setLabelList($label_pairs);
-
-			$metric_sub = new $metricClass();
-			$metric_sub->setValue($value);
-
-			switch ($this->type()) {
-				case "counter":
-					$metric->setCounter($metric_sub);
-					break;
-				case "gauge":
-					$metric->setGauge($metric_sub);
-					break;
-				default:
-					$metric->setUntyped($metric_sub);
-			}
-
-			$mf->addMetric($metric);
+			$tbr []= $this->full_name . "{" . implode(",", $label_pairs) . "} " . $value;
 		}
 
-		return $mf;
+		return implode("\n", $tbr);
 	}
 
 	protected function hashLabels(array $labels = []) {

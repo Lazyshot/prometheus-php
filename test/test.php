@@ -19,5 +19,5 @@ $counter->increment(['promo' => 2]);
 $counter->increment(['promo' => 3]);
 $counter->increment(['promo' => 4]);
 
-var_dump($client->debugStats());
+$client->renderStats();
 

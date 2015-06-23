@@ -1,10 +1,6 @@
 <?php
 namespace Prometheus;
 
-require_once 'protos/metrics.php';
-
-use DrSlump\Protobuf\Codec\Binary\NativeWriter;
-
 class Client {
 	private $registry;
 
@@ -25,34 +21,10 @@ class Client {
 	}
 
 	public function renderStats() {
-		$w = new NativeWriter;
+		header("Content-Type: text/plain; version=0.0.4");
 
 		foreach ($this->registry->getMetrics() as $metric) {
-			$metricProto = $metric->toProto();
-
-			$buf = $metricProto->serialize();
-			$len = strlen($buf);
-
-			$w->varint($len);
-			$w->write($buf);
+			echo $metric->serialize() . "\n";
 		}
-
-		header("Content-Type: application/vnd.google.protobuf; proto=io.prometheus.client.MetricFamily; encoding=delimited");
-
-		$stdout = fopen('php://stdout', 'w');
-		fwrite($stdout, $w->getBytes());
-	}
-
-	public function debugStats() {
-		$codec = new \DrSlump\Protobuf\Codec\PhpArray(['tags' => true, 'strict' => true]);
-		$tbr = [];
-
-		foreach ($this->registry->getMetrics() as $metric) {
-			$metricProto = $metric->toProto();
-
-			$tbr []= $metricProto->serialize($codec);
-		}
-
-		return $tbr;
 	}
 }

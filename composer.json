@@ -9,8 +9,7 @@
 		}
 	],
 	"require": {
-		"ext-memcached": "*",
-		"centraldesktop/protobuf-php": "~0.6.9"
+		"ext-memcached": "*"
 	},
 	"autoload": {
 		"psr-4": {
