@@ -39,7 +39,8 @@ class Client {
 
 		header("Content-Type: application/vnd.google.protobuf; proto=io.prometheus.client.MetricFamily; encoding=delimited");
 
-		fwrite(STDOUT, $w->getBytes());
+		$stdout = fopen('php://stdout', 'w');
+		fwrite($stdout, $w->getBytes());
 	}
 
 	public function debugStats() {
