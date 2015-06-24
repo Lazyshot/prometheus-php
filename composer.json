@@ -1,6 +1,7 @@
 {
 	"name": "lazyshot/prometheus-php",
 	"description": "Prometheus metrics client for PHP",
+	"version": "0.1.0",
 	"license": "apache2",
 	"authors": [
 		{
