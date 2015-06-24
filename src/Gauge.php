@@ -2,28 +2,24 @@
 
 namespace Prometheus;
 
-class Counter extends Metric {
+class Gauge extends Metric {
 	public function __construct(array $opts = []) {
 		parent::__construct($opts);
 	}
 
 	public function type() {
-		return "counter";
+		return "gauge";
 	}
 
 	public function defaultValue() {
 		return 0;
 	}
 
-	public function increment($labels = [], $by = 1) {
+	public function set($val) {
 		$hash = $this->hashLabels($labels);
 		if (!isset($this->values[$hash]))
 			$this->values[$hash] = $this->defaultValue();
 
-		$this->values[$hash] += $by;
-	}
-
-	public function decrement($labels = [], $by = 1) {
-		$this->increment($labels, -1 * $by);
+		$this->values[$hash] = $val;
 	}
 }

@@ -26,7 +26,7 @@ abstract class Metric {
 
 		$this->full_name = implode('_', [$this->namespace, $this->subsystem, $this->name]);
 
-		$this->updateFromCache();
+		$this->values = [];
 	}
 
 	public function values() {
@@ -79,22 +79,5 @@ abstract class Metric {
 		// TODO: save to memcached
 
 		return $hash;
-	}
-
-	protected function updateCache() {
-		if (!function_exists('apc_store'))
-			return;
-
-		apc_store($this->full_name . "_labels", $this->labels);
-		apc_store($this->full_name . "_values", $this->values);
-		apc_store($this->full_name . "_opts", $this->opts);
-	}
-
-	protected function updateFromCache() {
-		if (!function_exists('apc_fetch'))
-			return;
-
-		$this->labels = apc_fetch($this->full_name . "_labels");
-		$this->values = apc_fetch($this->full_name . "_values");
 	}
 }
