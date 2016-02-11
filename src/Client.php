@@ -1,7 +1,12 @@
 <?php
 namespace Prometheus;
 
-use GuzzleHttp\Client as Guzzle;
+#use GuzzleHttp\Client as Guzzle;
+require_once(dirname(__FILE__) . '/PrometheusException.php');
+require_once(dirname(__FILE__) . '/Metric.php');
+require_once(dirname(__FILE__) . '/Counter.php');
+require_once(dirname(__FILE__) . '/Gauge.php');
+require_once(dirname(__FILE__) . '/Registry.php');
 
 class Client {
 	private $registry;
@@ -33,10 +38,12 @@ class Client {
 		return $this->registry->register($metric);
 	}
 
-	public function sendStats() {
-		$http = new Guzzle([
+	#public function sendStats() {
+	public function getStats() {
+
+		/*$http = new Guzzle([
 			'base_uri' => $this->base_uri,
-		]);
+		]);*/
 
 		$body = "";
 
@@ -44,8 +51,10 @@ class Client {
 			$body .= $metric->serialize() . "\n";
 		}
 
-		$http->put('/metrics/jobs/' . uniqid(), [
-			'body' => $body,
-		]);
+		#$http->put('/metrics/jobs/' . uniqid(), [
+		#	'body' => $body,
+		#]);
+
+		return $body;
 	}
 }

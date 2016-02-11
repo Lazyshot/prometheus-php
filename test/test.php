@@ -1,8 +1,10 @@
 <?php
-require_once 'vendor/autoload.php';
+
+require_once dirname(__FILE__) . '/../src/Client.php';
+
 
 $client = new Prometheus\Client([
-	'base_uri' => 'http://condor.louddev.com:9091',
+	'base_uri' => 'http://localhost:9091',
 ]);
 
 $counter = $client->newCounter([
@@ -12,16 +14,34 @@ $counter = $client->newCounter([
 	'help' => 'Some testing bullshit',
 ]);
 
-$counter->increment(['promo' => 1]);
-$counter->increment(['promo' => 1]);
-$counter->increment(['promo' => 1]);
-$counter->increment(['promo' => 1]);
+$job_id = uniqid();
+while(true)
+{
 
-$counter->increment(['promo' => 2]);
-$counter->increment(['promo' => 2]);
+	$counter->increment( [ 'promo' => 1 ], rand( 1, 50 ) );
+	$counter->increment( [ 'promo' => 2 ], rand( 1, 50 ) );
+	$counter->increment( [ 'promo' => 3 ], rand( 1, 50 ) );
 
-$counter->increment(['promo' => 3]);
-$counter->increment(['promo' => 4]);
+	$data = $client->getStats(); # we may not need to serialize the data first.
 
-$client->sendStats();
 
+	echo "http://localhost:9091/metrics/job/".$job_id."\n";
+
+	$ch = curl_init( "http://localhost:9091/metrics/job/".$job_id );
+
+	curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
+	curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "PUT" );
+	curl_setopt( $ch, CURLOPT_POSTFIELDS, $data );
+
+	$response = curl_exec( $ch );
+	if ( !$response )
+	{
+		echo "failed\n";
+	}
+
+	print_r( $response );
+
+	$sleepTime = rand(1,20);
+	echo "sleeping $sleepTime\n";
+	sleep($sleepTime);
+}
