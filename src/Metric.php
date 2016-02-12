@@ -51,25 +51,23 @@ abstract class Metric {
 
 	public function serialize() {
 		$tbr = [];
-
 		$tbr []= "# HELP " . $this->full_name . " " . $this->help;
 		$tbr []= "# TYPE " . $this->full_name . " " . $this->type();
 
 		foreach ($this->values() as $val) {
 			list($labels, $value) = $val;
 			$label_pairs = [];
+			$suffix = isset($labels['__suffix']) ? $labels['__suffix'] : '';
+			unset($labels['__suffix']);
 
 			foreach ($labels as $k => $v) {
 				$v = str_replace("\"", "\\\"", $v);
 				$v = str_replace("\n", "\\n", $v);
 				$v = str_replace("\\", "\\\\", $v);
-
 				$label_pairs []= "$k=\"$v\"";
 			}
-
-			$tbr []= $this->full_name . "{" . implode(",", $label_pairs) . "} " . $value;
+			$tbr []= $this->full_name . $suffix . "{" . implode(",", $label_pairs) . "} " . $value;
 		}
-
 		return implode("\n", $tbr);
 	}
 
@@ -79,5 +77,10 @@ abstract class Metric {
 		// TODO: save to memcached
 
 		return $hash;
+	}
+
+	public function getLabels(){
+		/* For debugging only */
+		return $this->labels;
 	}
 }

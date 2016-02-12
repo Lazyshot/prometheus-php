@@ -17,6 +17,7 @@ class Counter extends Metric {
 
 	public function increment($labels = [], $by = 1) {
 		$hash = $this->hashLabels($labels);
+
 		if (!isset($this->values[$hash]))
 			$this->values[$hash] = $this->defaultValue();
 
