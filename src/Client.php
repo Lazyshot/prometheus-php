@@ -70,6 +70,7 @@ class Client {
 
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
 		curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "PUT" );
+		curl_setopt( $ch, CURLOPT_TIMEOUT, 1 );
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, $this->serialize() );
 
 		curl_exec( $ch );

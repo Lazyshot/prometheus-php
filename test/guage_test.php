@@ -20,9 +20,10 @@ while(true)
 	$guage->set( [ 'key1' => 'val1' ], rand( 1, 50 ) );
 	$guage->set( [ 'key2' => 'val2'], rand( 1, 50 ) );
 
+	echo "attempting a push\n";
 	$client->pushMetrics( "pretend_server", $job_id );
-
-	$sleepTime = rand( 1, 20 );
+	echo "push done\n";
+	$sleepTime = rand( 1, 5 );
 	echo "sleeping $sleepTime\n";
 	sleep( $sleepTime );
 }
