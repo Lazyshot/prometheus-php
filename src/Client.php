@@ -1,13 +1,6 @@
 <?php
 namespace Prometheus;
 
-require_once(dirname(__FILE__) . '/PrometheusException.php');
-require_once(dirname(__FILE__) . '/Metric.php');
-require_once(dirname(__FILE__) . '/Counter.php');
-require_once(dirname(__FILE__) . '/Gauge.php');
-require_once(dirname(__FILE__) . '/Registry.php');
-require_once(dirname(__FILE__) . '/Histogram.php');
-
 class Client {
 	private $registry;
 	private $options;
@@ -66,14 +59,16 @@ class Client {
 		if($job) $url.=$job;
 		if($instance) $url.="/instance/".$instance;
 
-		$ch = curl_init($url);
+		$ch = \curl_init($url);
 
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
-		curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "PUT" );
-		curl_setopt( $ch, CURLOPT_TIMEOUT, 1 );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, $this->serialize() );
+		\curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
+		\curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, "PUT" );
+		\curl_setopt( $ch, CURLOPT_TIMEOUT, 1 );
+		\curl_setopt( $ch, CURLOPT_POSTFIELDS, $this->serialize() );
 
-		curl_exec( $ch );
+		if (\curl_exec( $ch ) === false) {
+			throw new PrometheusException("Error sending metrics to push gateway: " . \curl_error($ch));
+		}
 
 		#TODO: Can the pushgateway return a 200 on successful PUT?
 		# Currently it returns nothing no matter what, lame

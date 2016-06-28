@@ -70,34 +70,45 @@ This fork has tried to simplify the process of using the client so that no outsi
 right out of the box.
 
 The only file that we need to include in order to start using the client is the Client.php.
-	require_once dirname(__FILE__) . '/../src/Client.php';
+```php
+require_once dirname(__FILE__) . '/../src/Client.php';
+```
 
 Creating a new client is easy.  Since the PHP client lives in the Prometheus namespace we must include that when creating
 a new client.  In addition the client must be passed a list of options.  Currently the only valid option is 'base_uri'.
 If you don't plan on using the built in "pushMetrics" function, you may set this to an empty string.
-	$client = new Prometheus\Client(['base_uri' => 'http://localhost:9091/metrics/job/']);
+```php
+$client = new Prometheus\Client(['base_uri' => 'http://localhost:9091/metrics/job/']);
+```
 
 Next we tell the client to create a new metric.  Here we are creating a new *Counter*.
+```php
 	$counter = $client->newCounter([
 		'namespace' => 'php_client',
 		'subsystem' => 'testing',
 		'name' => 'counter',
 		'help' => 'Testing the PHPClients Counter',
 	]);
+```
 
 We can use the new counter to increment different things.  Here we pretend to be counting the status_codes returned by an
 imaginary server to clients for the "home.php" page.
+```php
 	$counter->increment( [ 'url' => 'home.php', 'status_code' => 200 ], rand( 1, 50 ) );
 	$counter->increment( [ 'url' => 'home.php', 'status_code' => 404 ], rand( 1, 50 ) );
+```
 
 Once we have gathered enough data we tell the client to send the metrics to the Prometheus Push Gateway.
 We can either send the data right to the gateway.  Or we may specify a job, or a job and an instance of that job.
 The documentation at the Prometheus Push Gateway Git covers the specifics of what happens when setting jobs
 and instances and will not be covered here.
+```php
 	$client->pushMetrics( "pretend_server", $job_id );
+```
 
 Here is the above code all in one snippet.
 
+```php
 	require_once dirname(__FILE__) . '/../src/Client.php';
 
 	$client = new Prometheus\Client(['base_uri' => 'http://localhost:9091/metrics/job/']);
@@ -113,7 +124,7 @@ Here is the above code all in one snippet.
 	$counter->increment( [ 'url' => 'home.php', 'status_code' => 404 ], rand( 1, 50 ) );
 
 	$client->pushMetrics( "pretend_server", "test_instance" );
-
+```
  
 Going Further
 =============
@@ -132,7 +143,9 @@ Just Serialized Data
 
 If you want to see the data that is being sent to the server so you can expose it through a server or do whatever you wish
 you can simply call the serialize() function from the client.
+```php
 	echo $client->serialize();
+```
 
 
 

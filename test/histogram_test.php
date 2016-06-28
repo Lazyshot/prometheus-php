@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '/../src/Client.php';
+require_once dirname(__FILE__) . '/../vendor/autoload.php';
 
 
 $client = new Prometheus\Client([

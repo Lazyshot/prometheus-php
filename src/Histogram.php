@@ -1,7 +1,7 @@
 <?php
 
 namespace Prometheus;
-require_once(dirname(__FILE__) . '/Metric.php');
+
 class Histogram extends Metric {
     public function __construct(array $opts = []) {
         parent::__construct($opts);
