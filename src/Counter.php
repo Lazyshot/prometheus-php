@@ -15,7 +15,7 @@ class Counter extends Metric {
 		return 0;
 	}
 
-	public function increment($labels = [], $by = 1) {
+	public function increment(array $labels = [], $by = 1) {
 		$hash = $this->hashLabels($labels);
 
 		if (!isset($this->values[$hash]))
@@ -24,7 +24,7 @@ class Counter extends Metric {
 		$this->values[$hash] += $by;
 	}
 
-	public function decrement($labels = [], $by = 1) {
+	public function decrement(array $labels = [], $by = 1) {
 		$this->increment($labels, -1 * $by);
 	}
 }

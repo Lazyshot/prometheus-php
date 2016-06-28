@@ -15,7 +15,7 @@ class Gauge extends Metric {
 		return 0;
 	}
 
-	public function set($labels = [], $val) {
+	public function set(array $labels, $val) {
 		$hash = $this->hashLabels($labels);
 		if (!isset($this->values[$hash]))
 			$this->values[$hash] = $this->defaultValue();

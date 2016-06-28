@@ -7,16 +7,20 @@ class Histogram extends Metric {
         parent::__construct($opts);
         $this->buckets = isset($opts['buckets']) ? $opts['buckets'] : [1,2,3];
     }
+    
     public function type() {
         return "histogram";
     }
+
     public function defaultValue() {
         return 0;
     }
+
     public function getBuckets(){
         return $this->buckets;
     }
-    public function observe($labels = [], $value) {
+
+    public function observe(array $labels, $value) {
 
         $labels["__suffix"] = "_bucket";
         foreach ($this->buckets as $bucket) {
