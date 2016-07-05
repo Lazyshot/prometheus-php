@@ -54,7 +54,7 @@ Supported Metrics
 Before explaining how to use the client it's important to understand what metrics the PHP client supports.
 
 - *Counter* This metric can only be incremented positevely by 1 or more.
-- *Guage* This metric can be incremented both postively and negatively. This has some drawbacks in limiting the usefullnes
+- *Gauge* This metric can be incremented both postively and negatively. This has some drawbacks in limiting the usefullnes
  of certain querying functions.
 - *Histogram* This metric is a collection of buckets that counts how many data points fell into each bucket
  and a sum of all the values of those data points.
