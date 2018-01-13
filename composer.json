@@ -9,6 +9,9 @@
 			"email": "lazyshot@gmail.com"
 		}
 	],
+	"require": {
+		"php": "^7.1"
+	},
 	"autoload": {
 		"psr-4": {
 			"Prometheus\\": "src/"

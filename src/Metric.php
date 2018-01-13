@@ -1,7 +1,9 @@
 <?php
+
 namespace Prometheus;
 
-abstract class Metric {
+abstract class Metric
+{
 	protected $values = [];
 	protected $labels = [];
 
@@ -14,12 +16,13 @@ abstract class Metric {
 
 	public $full_name;
 
-	public function __construct(array $opts = []) {
-		$this->opts = $opts;
-		$this->name = isset($opts['name']) ? $opts['name'] : '';
+	public function __construct(array $opts = [])
+	{
+		$this->opts      = $opts;
+		$this->name      = isset($opts['name']) ? $opts['name'] : '';
 		$this->namespace = isset($opts['namespace']) ? $opts['namespace'] : '';
 		$this->subsystem = isset($opts['subsystem']) ? $opts['subsystem'] : '';
-		$this->help = isset($opts['help']) ? $opts['help'] : '';
+		$this->help      = isset($opts['help']) ? $opts['help'] : '';
 
 		if (empty($this->name)) throw new PrometheusException("A name is required for a metric");
 		if (empty($this->help)) throw new PrometheusException("A help is required for a metric");
@@ -29,57 +32,66 @@ abstract class Metric {
 		$this->values = [];
 	}
 
-	public function values() {
+	public function values() : array
+	{
 		$values = [];
 		foreach ($this->values as $hash => $val) {
-			$values []= [$this->labels[$hash], $val];
+			$values [] = [$this->labels[$hash], $val];
 		}
 
 		return $values;
 	}
 
-	public function get(array $labels = []) {
+	public function get(array $labels = [])
+	{
 		$hash = $this->hashLabels($labels);
-		return $this->values[$hash] ?: $this->defaultValue();
+
+		return $this->values[$hash] ? : $this->defaultValue();
 	}
 
-	public function defaultValue() {
+	public function defaultValue()
+	{
 		return null;
 	}
 
-	abstract public function type();
+	abstract public function type() : string;
 
-	public function serialize() {
-		$tbr = [];
-		$tbr []= "# HELP " . $this->full_name . " " . $this->help;
-		$tbr []= "# TYPE " . $this->full_name . " " . $this->type();
+	public function serialize() : string
+	{
+		$tbr    = [];
+		$tbr [] = "# HELP " . $this->full_name . " " . $this->help;
+		$tbr [] = "# TYPE " . $this->full_name . " " . $this->type();
 
 		foreach ($this->values() as $val) {
 			list($labels, $value) = $val;
 			$label_pairs = [];
-			$suffix = isset($labels['__suffix']) ? $labels['__suffix'] : '';
+			$suffix      = isset($labels['__suffix']) ? $labels['__suffix'] : '';
 			unset($labels['__suffix']);
 
 			foreach ($labels as $k => $v) {
-				$v = str_replace("\"", "\\\"", $v);
-				$v = str_replace("\n", "\\n", $v);
-				$v = str_replace("\\", "\\\\", $v);
-				$label_pairs []= "$k=\"$v\"";
+				$v              = str_replace("\"", "\\\"", $v);
+				$v              = str_replace("\n", "\\n", $v);
+				$v              = str_replace("\\", "\\\\", $v);
+				$label_pairs [] = "$k=\"$v\"";
 			}
-			$tbr []= $this->full_name . $suffix . "{" . implode(",", $label_pairs) . "} " . $value;
+			$tbr [] = $this->full_name . $suffix . "{" . implode(",", $label_pairs) . "} " . $value;
 		}
+
 		return implode("\n", $tbr);
 	}
 
-	protected function hashLabels(array $labels = []) {
-		$hash = md5(json_encode($labels, JSON_FORCE_OBJECT));
+	protected function hashLabels(array $labels = []) : string
+	{
+		$hash                = md5(json_encode($labels, JSON_FORCE_OBJECT));
 		$this->labels[$hash] = $labels;
+
 		// TODO: save to memcached
 
 		return $hash;
 	}
 
-	public function getLabels(){
+	public function getLabels() : array
+	{
 		/* For debugging only */
 		return $this->labels;
 	}
