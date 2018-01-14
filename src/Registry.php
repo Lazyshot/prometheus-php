@@ -1,11 +1,14 @@
 <?php
+
 namespace Prometheus;
 
 
-class Registry {
+class Registry
+{
 	private $metrics = [];
 
-	public function register(Metric $metric) {
+	public function register(Metric $metric)
+	{
 		$name = $metric->full_name;
 
 		if (isset($this->metrics[$name])) {
@@ -17,7 +20,18 @@ class Registry {
 		return $metric;
 	}
 
-	public function getMetrics() {
+	public function cleanup()
+	{
+		$this->metrics = [];
+	}
+
+	public function getMetric($metric) : ?Metric
+	{
+		return $this->metrics[$metric] ?? null;
+	}
+
+	public function getMetrics() : array
+	{
 		return $this->metrics;
 	}
 }

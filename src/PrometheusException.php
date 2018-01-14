@@ -2,6 +2,7 @@
 
 namespace Prometheus;
 
-class PrometheusException extends \Exception {
-	
+class PrometheusException extends \Exception
+{
+
 }

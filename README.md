@@ -78,7 +78,7 @@ Creating a new client is easy.  Since the PHP client lives in the Prometheus nam
 a new client.  In addition the client must be passed a list of options.  Currently the only valid option is 'base_uri'.
 If you don't plan on using the built in "pushMetrics" function, you may set this to an empty string.
 ```php
-$client = new Prometheus\Client(['base_uri' => 'http://localhost:9091/metrics/job/']);
+$client = new Prometheus\Client('http://localhost:9091/metrics/job/');
 ```
 
 Next we tell the client to create a new metric.  Here we are creating a new *Counter*.
@@ -111,7 +111,7 @@ Here is the above code all in one snippet.
 ```php
 	require_once dirname(__FILE__) . '/../src/Client.php';
 
-	$client = new Prometheus\Client(['base_uri' => 'http://localhost:9091/metrics/job/']);
+	$client = new Prometheus\Client('http://localhost:9091/metrics/job/');
 
 	$counter = $client->newCounter([
 		'namespace' => 'php_client',
